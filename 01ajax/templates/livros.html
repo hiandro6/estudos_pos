@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>livros</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- id: int
+    titulo:str
+    ano:int
+    edicao:int -->
+    <h1>cadastrar livros</h1>
+    <form action="" method="post" id="liv-form">
+        <label for="liv_titulo">título: </label>
+        <input type="text" name="liv_titulo" id="liv-titulo">
+
+        <label for="liv_ano">ano: </label>
+        <input type="number" name="liv_ano" id="liv-ano">
+        
+        <label for="liv_edicao">edição: </label>
+        <input type="number" name="liv_edicao" id="liv-edicao">
+
+        <input type="submit" value="cadastrar">
+    </form>
+
+    <h2>livros já cadastrados:</h2>
+    <ol id="lista-livros">
+    </ol>
+
+    <script>
+        $("#liv-form").submit(function(event) {
+            event.preventDefault();
+
+            const titulo = $("#liv-titulo").val();
+            const ano = $("#liv-ano").val();
+            const edicao = $("#liv-edicao").val();
+
+            const novoLivro = {
+                titulo: titulo,
+                ano: ano,
+                edicao: edicao
+            }
+
+            $.ajax(
+                {
+                    url: "http://127.0.0.1:8000/livros/",
+                    method: "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(novoLivro),
+                    success: function(response){
+                        alert("livro cadastrado!");
+                        console.log("success", response);
+                        location.reload(); // atualiza a página html
+                    },
+
+                    error: function(response){
+                        alert("erro ao cadastrar livro")
+                        console.log("error", response)
+                    }
+                }
+            )
+        })
+
+        function carregarLivros() {
+            $.ajax({
+                url: "http://127.0.0.1:8000/livros/",
+                method: "GET",
+                success: function (livros) {
+                    $("#lista-livros").empty(); // limpa a lista antes de atualizar
+
+                    livros.forEach(function (livro) {
+                        const item = `
+                            <li>
+                                <h4>${livro.titulo}</h4>
+                                <p>${livro.ano} - edição: ${livro.edicao}</p>
+                            </li>
+                        `;
+                        $("#lista-livros").append(item);
+                    });
+                },
+                error: function (response) {
+                    alert("Erro ao carregar livros");
+                    console.log("error", response);
+                }
+            });
+        }
+
+        // $(document).ready(function () { //função jQuery que executa somente depois que o HTML todo estiver carregado no navegador.
+        //     carregarLivros();
+        // });
+        carregarLivros();
+    </script>
+</body>
+</html>

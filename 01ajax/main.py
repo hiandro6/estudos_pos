@@ -1,9 +1,19 @@
 from fastapi import FastAPI, HTTPException
-from models import Usuario, Livro, Biblioteca, Emprestimo
+from models import Usuario, Livro, LivroCreate, Biblioteca, Emprestimo
 from typing import List
-# from uvicorn import 
+
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Libera o acesso para todas as origens (origins="*")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Em produção, troque "*" por uma lista de URLs confiáveis
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # usuários:
 usuarios: List[Usuario] = []
@@ -33,10 +43,16 @@ def listar_livros():
     return livros
 
 @app.post("/livros/", response_model=Livro)
-def criar_livro(livro:Livro):
-    livro.id = len(livros) + 1
-    livros.append(livro)
-    return livro
+def criar_livro(livro:LivroCreate):
+    novo_livro = Livro(
+        id=len(livros) + 1,
+        titulo=livro.titulo,
+        ano=livro.ano,
+        edicao=livro.edicao
+    )
+
+    livros.append(novo_livro)
+    return novo_livro
 
 @app.delete("/livros/{liv_id}", response_model=Livro)
 def excluir_livro(liv_id:int):

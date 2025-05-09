@@ -14,6 +14,12 @@ class Livro(BaseModel):
     ano:int
     edicao:int
 
+class LivroCreate(BaseModel):
+    titulo:str
+    ano:int
+    edicao:int
+
+
 class Biblioteca(BaseModel):
     id: int
     nome:str
