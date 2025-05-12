@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 from typing import List
-from datetime import datetime
+from datetime import date
 
 class Usuario(BaseModel):
     id: int
     username:str
     password:str
-    data_criacao:datetime
+    data_criacao:date
 
 class Livro(BaseModel):
     id: int
@@ -20,15 +20,16 @@ class LivroCreate(BaseModel):
     edicao:int
 
 
-class Biblioteca(BaseModel):
-    id: int
-    nome:str
-    acervo: List["Livro"]
-    usuario: List["Usuario"]
-
 class Emprestimo(BaseModel):
     id: int
     usuario:Usuario
     livro:Livro
-    data_emprestimo:datetime
-    data_devolucao:datetime
+    data_emprestimo:date
+    data_devolucao:date
+
+class Biblioteca(BaseModel):
+    id: int
+    nome:str
+    acervo: List["Livro"]
+    usuarios: List["Usuario"]
+    emprestimos: List["Emprestimo"]

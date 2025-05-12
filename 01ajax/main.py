@@ -15,11 +15,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# usuários:
 usuarios: List[Usuario] = []
-@app.get("/usuarios/", response_model=List[Usuario])
-def listar_usuarios():
-    return usuarios
+livros: List[Livro] = []
+bibliotecas: List[Biblioteca] = []
+emprestimos: List[Emprestimo] = []
+
+
+# usuários:
+@app.get("/usuarios/{biblioteca}", response_model=List[Usuario])
+def listar_usuarios(biblioteca:str):
+    for biblioteca in bibliotecas:
+        if biblioteca.nome == biblioteca:
+            return usuarios
+    raise HTTPException(status_code=404, detail="Não localizada")
+    
+
+@app.get("/usuarios/{biblioteca}/{username}", response_model=Usuario)
+def listar_usuario(username:str):
+    for biblioteca in bibliotecas:
+        if biblioteca.nome == biblioteca:
+            for usuario in usuarios:
+                if usuario.username == username:
+                    return usuario
+            raise HTTPException(404, "Usuário não localizado")
 
 @app.post("/usuarios/", response_model=Usuario)
 def criar_usuario(usuario:Usuario):
@@ -27,20 +45,90 @@ def criar_usuario(usuario:Usuario):
     usuarios.append(usuario)
     return usuario
 
-@app.delete("/usuarios/{usu_id}", response_model=Usuario)
-def excluir_usuario(usu_id:int):
+@app.delete("/usuarios/{username}", response_model=Usuario)
+def excluir_usuario(username:str):
     for index, usuario in enumerate(usuarios):
-        if usu_id == usuario.id:
+        if username == usuario.username:
             del usuarios[index]
             return usuario
+    raise HTTPException(status_code=404, detail="Usuário não localizado")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# biblioteca: 
+@app.get("/biblioteca/", response_model=List[Biblioteca])
+def listar_bibliotecas():
+    return bibliotecas
+
+
+@app.get("/biblioteca/{nome}", response_model=Biblioteca)
+def listar_bibliotecas(nome:str):
+    for lib in bibliotecas:
+        if lib.nome == nome:
+            return lib
+    raise HTTPException(status_code=404, detail="Não localizada")
+
+@app.post("/biblioteca/", response_model=Biblioteca)
+def criar_biblioteca(nome:str):
+    lib_id = len(bibliotecas) + 1
+    data = {
+        "id": lib_id,
+        "nome": nome,
+        "acervo": [],
+        "usuarios": [],
+        "emprestimos": []
+    }
+
+
+    biblioteca = Biblioteca(**data)
+    # biblioteca.id = len(bibliotecas) + 1
+    # biblioteca.nome = nome
+    # biblioteca.acervo = []
+    # biblioteca.usuarios = []
+    # biblioteca.emprestimos = []
+
+    bibliotecas.append(biblioteca)
+    return biblioteca
+
+@app.delete("/biblioteca/{nome}", response_model=Biblioteca)
+def excluir_biblioteca(nome:str):
+    for index, biblioteca in enumerate(bibliotecas):
+        if nome == biblioteca.nome:
+            del bibliotecas[index]
+            return biblioteca
     raise HTTPException(status_code=404, detail="Não localizado")
 
 
+
+
+
+
+
+
+
 # livros:
-livros: List[Livro] = []
 @app.get("/livros/", response_model=List[Livro])
 def listar_livros():
     return livros
+
+@app.get("/livros/{titulo}", response_model=Livro)
+def listar_livro(titulo:str):
+    for livro in livros:
+        if livro.titulo == titulo:
+            return livro
+        
+    raise HTTPException(404, "livro não encontrado")
 
 @app.post("/livros/", response_model=Livro)
 def criar_livro(livro:LivroCreate):
@@ -54,42 +142,20 @@ def criar_livro(livro:LivroCreate):
     livros.append(novo_livro)
     return novo_livro
 
-@app.delete("/livros/{liv_id}", response_model=Livro)
-def excluir_livro(liv_id:int):
+@app.delete("/livros/{titulo}", response_model=Livro)
+def excluir_livro(titulo:str):
     for index, livro in enumerate(livros):
-        if liv_id == livro.id:
+        if titulo == livro.titulo:
             del livros[index]
             return livro
     raise HTTPException(status_code=404, detail="Não localizado")
 
 
 
-# biblioteca: 
-bibliotecas: List[Biblioteca] = []
-@app.get("/biblioteca/", response_model=List[Biblioteca])
-def listar_bibliotecas():
-    return bibliotecas
-
-@app.post("/biblioteca/", response_model=Biblioteca)
-def criar_biblioteca(biblioteca:Biblioteca):
-    biblioteca.id = len(bibliotecas) + 1
-    bibliotecas.append(biblioteca)
-    return biblioteca
-
-@app.delete("/biblioteca/{biblioteca_id}", response_model=Biblioteca)
-def excluir_biblioteca(biblioteca_id:int):
-    for index, biblioteca in enumerate(bibliotecas):
-        if biblioteca_id == biblioteca.id:
-            del bibliotecas[index]
-            return biblioteca
-    raise HTTPException(status_code=404, detail="Não localizado")
-
-
 
 
 
 # empréstimmos: 
-emprestimos: List[Emprestimo] = []
 @app.get("/emprestimos/", response_model=List[Emprestimo])
 def listar_emprestimos():
     return emprestimos
