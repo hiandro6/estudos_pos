@@ -30,7 +30,7 @@ def listar_usuarios(biblioteca:str):
     raise HTTPException(status_code=404, detail="Não localizada")
     
 
-@app.get("/usuarios/{biblioteca}/{username}", response_model=Usuario)
+@app.get("/usuarios/{username}", response_model=Usuario)
 def listar_usuario(username:str):
     for biblioteca in bibliotecas:
         if biblioteca.nome == biblioteca:

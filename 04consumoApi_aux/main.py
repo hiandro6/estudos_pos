@@ -1,0 +1,22 @@
+import requests
+
+if __name__ == "__main__":
+    url = "http://127.0.0.1:8000"
+    r = requests.get(f"{url}/livros")
+    print(r.text)
+    livro = {
+        "titulo": "lica",
+        "ano": 143,
+        "edicao": 12
+    }
+    r = requests.post(f"{url}/livros", json=livro)
+    print(r.status_code)
+    print(r.text)
+
+    pesquisa = "lica"
+    r = requests.get(f"{url}/livros/{pesquisa}")
+    print(r.status_code)
+    print(r.text)
+
+    r = requests.delete(f"{url}/livros/{pesquisa}")
+    print(r.status_code)
