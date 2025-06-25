@@ -29,7 +29,7 @@ def criar_livro(livro:Livro):
     return livro
     raise HTTPException(404,"Não localizado")
 
-@app.put("/livros", response_model=Livro)
+@app.put("/livros/{titulo}", response_model=Livro)
 def editar_livro(titulo:str, novoLivro: Livro):
     for livro in livros:
         if livro.titulo == titulo:
