@@ -9,7 +9,7 @@ def listar_livros():
     return livros
     
 @app.get("/livros/{titulo}",response_model=Livro)
-def listar_livros( titulo:str):
+def listar_livro( titulo:str):
     for livro in livros:
         if livro.titulo == titulo:
             return livro
@@ -27,7 +27,7 @@ def deletar_livro(titulo:str):
 def criar_livro(livro:Livro):
     livros.append(livro)
     return livro
-    raise HTTPException(404,"Não localizado")
+    
 
 @app.put("/livros/{titulo}", response_model=Livro)
 def editar_livro(titulo:str, novoLivro: Livro):
